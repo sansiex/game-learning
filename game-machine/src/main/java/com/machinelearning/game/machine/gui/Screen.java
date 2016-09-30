@@ -1,5 +1,7 @@
 package com.machinelearning.game.machine.gui;
 
+import com.machinelearning.game.machine.controller.Game;
+
 import javax.swing.*;
 
 /**
@@ -7,31 +9,23 @@ import javax.swing.*;
  */
 public class Screen extends JFrame {
 
-    private JLabel label;
-    private JButton button;
+    private GamePanel gamePanel;
 
-    public Screen(){
+    public Screen(Game game){
         super();
         this.setSize(800, 600);
         this.getContentPane().setLayout(null);
-        initComponents();
-        this.add(label);
-        this.add(button);
+        initComponents(game);
+        this.add(gamePanel);
         this.setTitle("Ping-Pong");
     }
 
-    private void initComponents(){
-        label=new JLabel();
-        label.setText("label");
-        label.setBounds(100, 100, 100, 50);
-
-        button=new JButton();
-        button.setBounds(100, 150, 100, 50);
-        button.setText("button");
+    private void initComponents(Game game){
+        gamePanel=new GamePanel(game.getDrawer());
     }
 
     public static void main(String[] args) {
-        Screen screen = new Screen();
-        screen.setVisible(true);
+//        Screen screen = new Screen();
+//        screen.setVisible(true);
     }
 }
