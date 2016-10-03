@@ -1,6 +1,7 @@
 package com.machinelearning.game.machine.gui;
 
-import com.machinelearning.game.machine.controller.Game;
+import com.machinelearning.game.machine.controller.Drawer;
+import com.machinelearning.game.machine.controller.GameCore;
 
 import javax.swing.*;
 
@@ -11,21 +12,25 @@ public class Screen extends JFrame {
 
     private GamePanel gamePanel;
 
-    public Screen(Game game){
+    public Screen(GameCore core){
         super();
-        this.setSize(800, 600);
+        initComponents(core);
+        Drawer drawer=core.getDrawer();
+        this.setSize(drawer.getWidth()+20, drawer.getHeight()+50);
         this.getContentPane().setLayout(null);
-        initComponents(game);
         this.add(gamePanel);
-        this.setTitle("Ping-Pong");
+        this.setTitle(core.getTitle());
     }
 
-    private void initComponents(Game game){
-        gamePanel=new GamePanel(game.getDrawer());
+    private void initComponents(GameCore core){
+        gamePanel=new GamePanel(core);
     }
 
-    public static void main(String[] args) {
-//        Screen screen = new Screen();
-//        screen.setVisible(true);
+    public GamePanel getGamePanel() {
+        return gamePanel;
+    }
+
+    public void setGamePanel(GamePanel gamePanel) {
+        this.gamePanel = gamePanel;
     }
 }

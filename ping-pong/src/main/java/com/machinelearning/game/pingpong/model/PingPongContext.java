@@ -1,9 +1,11 @@
 package com.machinelearning.game.pingpong.model;
 
+import com.machinelearning.game.machine.model.Context;
+
 /**
  * Created by zuhai.jiang on 2016/9/30.
  */
-public class Status {
+public class PingPongContext extends Context {
     private int ballx;
     private int bally;
     private double dirx;
@@ -11,6 +13,8 @@ public class Status {
     private int speed;
     private int racketX;
     private int racketLen;
+    //0-unknown;1-suc;2-fail
+    private int result;
 
     public int getBallx() {
         return ballx;
@@ -66,5 +70,13 @@ public class Status {
 
     public void setRacketLen(int racketLen) {
         this.racketLen = racketLen;
+    }
+
+    public int getResult() {
+        return result;
+    }
+
+    public void setResult(int result) {
+        this.result = result;
     }
 }

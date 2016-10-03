@@ -1,6 +1,8 @@
 package com.machinelearning.game.machine.gui;
 
 import com.machinelearning.game.machine.controller.Drawer;
+import com.machinelearning.game.machine.controller.GameCore;
+import com.machinelearning.game.machine.controller.Status;
 
 import javax.swing.*;
 import javax.swing.border.SoftBevelBorder;
@@ -21,11 +23,14 @@ public class GamePanel extends JPanel {
 
     private Drawer drawer;
 
-    public GamePanel(Drawer drawer){
-        setDrawer(drawer);
+    private GameCore core;
+
+    public GamePanel(GameCore core){
+        this.core=core;
+        setDrawer(core.getDrawer());
         setSize(drawer.getWidth(), drawer.getHeight());
 //        setBorder(new SoftBevelBorder(1, Color.BLACK, Color.BLACK));
-        setBackground(Color.BLACK);
+        setBackground(Color.WHITE);
         setFocusable(true);
         startDrawing();
     }
@@ -33,7 +38,7 @@ public class GamePanel extends JPanel {
     @Override
     protected void paintComponent(Graphics g0) {
         super.paintComponent(g0);
-        drawer.draw(g0);
+        drawer.draw(g0, core.getContext());
     }
 
     public Drawer getDrawer() {
@@ -58,9 +63,7 @@ public class GamePanel extends JPanel {
         timer.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
-                if (running) {
-                    repaint();
-                }
+                repaint();
             }
         }, 1000, interval);
     }
