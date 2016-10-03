@@ -1,5 +1,6 @@
 package com.machinelearning.game.pingpong;
 
+import com.machinelearning.game.machine.exception.GameException;
 import com.machinelearning.game.pingpong.controller.PingPongCore;
 
 /**
@@ -7,7 +8,7 @@ import com.machinelearning.game.pingpong.controller.PingPongCore;
  */
 public class Launcher {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws GameException {
         new PingPongCore();
     }
 

@@ -1,6 +1,7 @@
 package com.machinelearning.game.machine.controller;
 
 import com.machinelearning.game.machine.model.Context;
+import com.machinelearning.game.machine.util.JsonUtil;
 
 import java.awt.*;
 
@@ -27,5 +28,10 @@ public abstract class Drawer {
 
     public void setCore(GameCore core) {
         this.core = core;
+    }
+
+    protected void printDebug(Graphics g){
+        String info = JsonUtil.toJson(core.getController().getContext());
+        g.drawString(info, 0, getHeight()-20);
     }
 }

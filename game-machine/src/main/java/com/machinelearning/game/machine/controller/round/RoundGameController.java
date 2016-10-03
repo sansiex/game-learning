@@ -5,8 +5,10 @@ import com.machinelearning.game.machine.action.PlayingAction;
 import com.machinelearning.game.machine.controller.GameController;
 import com.machinelearning.game.machine.controller.GameCore;
 import com.machinelearning.game.machine.controller.Status;
+import com.machinelearning.game.machine.controller.VideoPlayer;
 
 import java.awt.event.KeyEvent;
+import java.io.*;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -15,7 +17,7 @@ import java.util.TimerTask;
  */
 public abstract class RoundGameController extends GameController {
 
-    protected transient boolean roundOpen=true;
+    protected transient boolean roundOpen = true;
     protected long currentInterval;
     protected Timer timer;
 
@@ -23,13 +25,17 @@ public abstract class RoundGameController extends GameController {
         super(core);
     }
 
+    abstract protected void moveByVideo(String moveLine);
+    abstract protected void initByVideo(VideoPlayer player);
+    abstract protected void moveByAI();
+
     @Override
     public void keyPressed(KeyEvent e) {
-        Action action=actionMap.get(e.getKeyCode());
+        Action action = actionMap.get(e.getKeyCode());
         if (action == null) {
             return;
-        } else if (action instanceof PlayingAction){
-            if (!roundOpen) {
+        } else if (action instanceof PlayingAction) {
+            if (!roundOpen || MODE_HUMAN != playMode) {
                 return;
             }
             action.doAction();
@@ -43,7 +49,7 @@ public abstract class RoundGameController extends GameController {
     }
 
     @Override
-    public void startGame(){
+    public void startGame() {
         logger.info("start playing game");
         currentInterval = getDefaultMoveInterval();
         if (currentInterval > 0) {
@@ -67,15 +73,36 @@ public abstract class RoundGameController extends GameController {
         timer.cancel();
         int res = timer.purge();
         logger.info("removed {} timer tasks", res);
-        timer=null;
+        timer = null;
         setRoundOpen(false);
     }
 
-    private void startNewRound(){
+    private void startNewRound() {
         //logger.info("start new round");
         beforeRoundStart();
         getCore().repaint();
         setRoundOpen(true);
+        if (MODE_VIDEO == playMode) {
+            String moveLine= null;
+            moveLine = getCore().getVideoPlayer().readLine();
+            if (moveLine == null) {
+                end();
+            } else {
+                moveByVideo(moveLine);
+            }
+        } else if (MODE_AI == playMode ) {
+            moveByAI();
+        }
+    }
+
+    @Override
+    public void playVideo(File file) throws FileNotFoundException {
+        VideoPlayer player = getCore().getVideoPlayer();
+        player.play(file);
+        setPlayMode(MODE_VIDEO);
+        context = initContext();
+        initByVideo(player);
+        start();
     }
 
     public boolean isRoundOpen() {

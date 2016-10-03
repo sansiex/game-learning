@@ -38,6 +38,8 @@ public class PingPongDrawer extends Drawer {
         } else if (ctx.getResult() == PingPongController.RESULT_SUCCEED) {
             g.drawString("SUCCESS", 100, 100);
         }
+
+        printDebug(g);
     }
 
     public int getWidth() {

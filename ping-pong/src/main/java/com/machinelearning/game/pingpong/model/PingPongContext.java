@@ -1,6 +1,7 @@
 package com.machinelearning.game.pingpong.model;
 
 import com.machinelearning.game.machine.model.Context;
+import com.machinelearning.game.machine.model.Record;
 
 /**
  * Created by zuhai.jiang on 2016/9/30.
@@ -14,6 +15,7 @@ public class PingPongContext extends Context {
     private int racketX;
     private int racketLen;
     //0-unknown;1-suc;2-fail
+    private int move;
     private int result;
 
     public int getBallx() {
@@ -72,11 +74,44 @@ public class PingPongContext extends Context {
         this.racketLen = racketLen;
     }
 
+    public int getMove() {
+        return move;
+    }
+
+    public void setMove(int move) {
+        this.move = move;
+    }
+
     public int getResult() {
         return result;
     }
 
     public void setResult(int result) {
         this.result = result;
+    }
+
+    @Override
+    public Record toRecord() {
+        PingPongRecord rec = new PingPongRecord();
+        rec.setX(ballx);
+        rec.setY(bally);
+        rec.setDx(dirx);
+        rec.setDy(diry);
+        rec.setRacketX(racketX);
+        rec.setSpeed(speed);
+        rec.setMove(move);
+        return rec;
+    }
+
+    @Override
+    public void update(Record rec) {
+        PingPongRecord r= (PingPongRecord) rec;
+        setBallx(r.getX());
+        setBally(r.getY());
+        setDirx(r.getDx());
+        setDiry(r.getDy());
+        setMove(r.getMove());
+        setRacketX(r.getRacketX());
+        setSpeed(r.getSpeed());
     }
 }

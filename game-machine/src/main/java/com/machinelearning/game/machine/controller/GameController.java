@@ -1,11 +1,15 @@
 package com.machinelearning.game.machine.controller;
 
 import com.machinelearning.game.machine.action.Action;
+import com.machinelearning.game.machine.exception.GameException;
 import com.machinelearning.game.machine.model.Context;
 import org.slf4j.Logger;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -16,6 +20,10 @@ public abstract class GameController implements KeyListener {
 
     protected final Logger logger = org.slf4j.LoggerFactory.getLogger(this.getClass());
 
+    public static final int MODE_HUMAN=0;
+    public static final int MODE_VIDEO=1;
+    public static final int MODE_AI=2;
+
     public GameController(GameCore core){
         setCore(core);
         init();
@@ -25,10 +33,12 @@ public abstract class GameController implements KeyListener {
             public void doAction() {
                 if (status == Status.NEW) {
                     logger.info("New-KeyPressed:" + KeyEvent.VK_S);
+                    setPlayMode(MODE_HUMAN);
                     start();
                 } else if (status == Status.OVER) {
                     logger.info("OVER-KeyPressed:"+KeyEvent.VK_S);
                     reset();
+                    setPlayMode(MODE_HUMAN);
                     start();
                 }
             }
@@ -37,6 +47,7 @@ public abstract class GameController implements KeyListener {
 
     private GameCore core;
     protected Status status;
+    protected int playMode;
     protected Context context;
     protected Map<Integer, Action> actionMap;
 
@@ -49,7 +60,12 @@ public abstract class GameController implements KeyListener {
     }
 
     public void start() {
-        logger.info("start game");
+        logger.info("start game--MODE:"+playMode);
+        try {
+            core.getStorage().createFileForCurrentGame();
+        } catch (Exception e) {
+            logger.error("Failed to create file", e);
+        }
         setStatus(Status.RUNNING);
         startGame();
     }
@@ -61,12 +77,10 @@ public abstract class GameController implements KeyListener {
     }
 
     abstract protected Context initContext();
-
     abstract public void startGame();
-
     abstract public void endGame();
-
     abstract public void pause();
+    abstract public void playVideo(File file) throws FileNotFoundException;
 
     public abstract void fail();
 
@@ -76,6 +90,7 @@ public abstract class GameController implements KeyListener {
 
     public void init(){
         logger.info("init controller");
+        playMode=MODE_HUMAN;
         status = Status.NEW;
         context = initContext();
     }
@@ -120,5 +135,13 @@ public abstract class GameController implements KeyListener {
 
     public void setContext(Context context) {
         this.context = context;
+    }
+
+    public int getPlayMode() {
+        return playMode;
+    }
+
+    public void setPlayMode(int playMode) {
+        this.playMode = playMode;
     }
 }
