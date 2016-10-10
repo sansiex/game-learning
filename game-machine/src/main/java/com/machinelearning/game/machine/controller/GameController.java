@@ -3,6 +3,7 @@ package com.machinelearning.game.machine.controller;
 import com.machinelearning.game.machine.action.Action;
 import com.machinelearning.game.machine.exception.GameException;
 import com.machinelearning.game.machine.model.Context;
+import com.machinelearning.game.machine.player.AbstractPlayer;
 import org.slf4j.Logger;
 
 import java.awt.event.KeyEvent;
@@ -16,7 +17,7 @@ import java.util.Map;
 /**
  * Created by zuhai.jiang on 2016/9/30.
  */
-public abstract class GameController implements KeyListener {
+public abstract class GameController {
 
     protected final Logger logger = org.slf4j.LoggerFactory.getLogger(this.getClass());
 
@@ -27,29 +28,12 @@ public abstract class GameController implements KeyListener {
     public GameController(GameCore core){
         setCore(core);
         init();
-        actionMap = new HashMap<>();
-        addAction(KeyEvent.VK_S, new Action() {
-            @Override
-            public void doAction() {
-                if (status == Status.NEW) {
-                    logger.info("New-KeyPressed:" + KeyEvent.VK_S);
-                    setPlayMode(MODE_HUMAN);
-                    start();
-                } else if (status == Status.OVER) {
-                    logger.info("OVER-KeyPressed:"+KeyEvent.VK_S);
-                    reset();
-                    setPlayMode(MODE_HUMAN);
-                    start();
-                }
-            }
-        });
     }
 
-    private GameCore core;
+    protected GameCore core;
     protected Status status;
     protected int playMode;
     protected Context context;
-    protected Map<Integer, Action> actionMap;
 
     abstract public long getDefaultMoveInterval();
 
@@ -62,31 +46,41 @@ public abstract class GameController implements KeyListener {
     public void start() {
         logger.info("start game--MODE:"+playMode);
         try {
-            core.getStorage().createFileForCurrentGame();
+            AbstractPlayer player = core.getCurrentPlayer();
+            String name = player.getName();
+            core.getStorage().createFileForCurrentGame(name);
         } catch (Exception e) {
             logger.error("Failed to create file", e);
         }
         setStatus(Status.RUNNING);
-        startGame();
+        if (MODE_HUMAN == playMode) {
+            startHumanGame();
+        } else {
+            startAutoGame();
+        }
     }
 
     public void end() {
         logger.info("end");
         setStatus(Status.OVER);
+        try {
+            core.getCurrentPlayer().close();
+        } catch (IOException e) {
+            logger.error("Failed to end game", e);
+            System.exit(1);
+        }
         endGame();
     }
 
     abstract protected Context initContext();
-    abstract public void startGame();
+    abstract public void startHumanGame();
+    abstract public void startAutoGame();
     abstract public void endGame();
     abstract public void pause();
     abstract public void playVideo(File file) throws FileNotFoundException;
+    abstract public void playAI(String name);
 
     public abstract void fail();
-
-    public void addAction(int kv, Action action){
-        actionMap.put(kv, action);
-    }
 
     public void init(){
         logger.info("init controller");
@@ -95,23 +89,8 @@ public abstract class GameController implements KeyListener {
         context = initContext();
     }
 
-    @Override
-    public void keyTyped(KeyEvent e) {
 
-    }
 
-    @Override
-    public void keyPressed(KeyEvent e) {
-        Action action = actionMap.get(e.getKeyCode());
-        if (action != null) {
-            action.doAction();
-        }
-    }
-
-    @Override
-    public void keyReleased(KeyEvent e) {
-
-    }
 
     public GameCore getCore() {
         return core;

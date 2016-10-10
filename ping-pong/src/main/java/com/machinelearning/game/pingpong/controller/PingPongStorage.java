@@ -24,6 +24,7 @@ public class PingPongStorage extends Storage<PingPongRecord> {
         sb.append(r.getDy()).append("\t");
         sb.append(r.getRacketX()).append("\t");
         sb.append(r.getMove()).append("\t");
+        sb.append(r.getRoundCount()).append("\t");
         sb.append(r.getLabel());
         return sb.toString();
     }
@@ -39,7 +40,8 @@ public class PingPongStorage extends Storage<PingPongRecord> {
         rec.setDy(Double.parseDouble(arr[4]));
         rec.setRacketX(Integer.parseInt(arr[5]));
         rec.setMove(Integer.parseInt(arr[6]));
-        rec.setLabel(Integer.parseInt(arr[7]));
+        rec.setRoundCount(Integer.parseInt(arr[7]));
+        rec.setLabel(Integer.parseInt(arr[8]));
         return rec;
     }
 }

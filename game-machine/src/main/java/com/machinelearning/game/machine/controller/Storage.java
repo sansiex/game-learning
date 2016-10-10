@@ -41,13 +41,13 @@ public abstract class Storage<T extends Record> {
     abstract public String serialize(T rec);
     abstract public T deserialize(String line);
 
-    public void createFileForCurrentGame() throws IOException, GameException {
+    public void createFileForCurrentGame(String prefix) throws IOException, GameException {
         int mode = core.getController().getPlayMode();
         if (GameController.MODE_VIDEO == mode) {
             return;
         }
         String date = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss").format(new Date());
-        String fileName = date+".txt";
+        String fileName = prefix+"-"+date+".txt";
         String path = dir.getAbsolutePath()+File.separator+fileName;
         currentFile = new File(path);
         boolean res = currentFile.createNewFile();

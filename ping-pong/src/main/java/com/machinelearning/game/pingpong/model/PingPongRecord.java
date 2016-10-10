@@ -1,11 +1,12 @@
 package com.machinelearning.game.pingpong.model;
 
 import com.machinelearning.game.machine.model.Record;
+import com.machinelearning.game.machine.model.round.RoundRecord;
 
 /**
  * Created by zuhai.jiang on 2016/10/3.
  */
-public class PingPongRecord extends Record {
+public class PingPongRecord extends RoundRecord {
     private int x;
     private int y;
     private int speed;

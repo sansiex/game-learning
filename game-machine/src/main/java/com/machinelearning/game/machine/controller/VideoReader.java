@@ -7,7 +7,7 @@ import java.io.*;
 /**
  * Created by zuhai.jiang on 2016/10/3.
  */
-public class VideoPlayer {
+public class VideoReader {
 
     protected final Logger logger = org.slf4j.LoggerFactory.getLogger(this.getClass());
 

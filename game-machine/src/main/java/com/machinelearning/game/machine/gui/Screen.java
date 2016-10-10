@@ -3,6 +3,7 @@ package com.machinelearning.game.machine.gui;
 import com.machinelearning.game.machine.controller.Drawer;
 import com.machinelearning.game.machine.controller.GameCore;
 import com.machinelearning.game.machine.controller.Storage;
+import com.machinelearning.game.machine.player.AbstractPlayer;
 import org.slf4j.Logger;
 
 import javax.swing.*;
@@ -12,6 +13,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.Map;
 
 /**
  * Created by zuhai.jiang on 2016/9/26.
@@ -23,7 +25,7 @@ public class Screen extends JFrame {
     private GameCore core;
     private GamePanel gamePanel;
     private JMenuBar menuBar;
-    private JToolBar toolBar;
+//    private JToolBar toolBar;
     private JFileChooser fileChooser;
 
 
@@ -49,11 +51,20 @@ public class Screen extends JFrame {
         JMenuItem item=new JMenuItem("播放录像");
         item.addActionListener(new PlayVideoListener());
         menu.add(item);
+
+        JMenu aiMenu = new JMenu("AI游戏");
+        Map<String, AbstractPlayer> playerMap = core.getAiPlayerMap();
+        for (Map.Entry<String, AbstractPlayer> ent:playerMap.entrySet()) {
+            JMenuItem playItem=new JMenuItem(ent.getKey());
+            playItem.addActionListener(new PlayAIListener(ent.getKey()));
+            aiMenu.add(playItem);
+        }
         menuBar.add(menu);
-        toolBar = new JToolBar();
-        JButton button=new JButton("播放录像");
-        button.addActionListener(new PlayVideoListener());
-        toolBar.add(button);
+        menuBar.add(aiMenu);
+//        toolBar = new JToolBar();
+//        JButton button=new JButton("播放录像");
+//        button.addActionListener(new PlayVideoListener());
+//        toolBar.add(button);
 
         fileChooser = new JFileChooser();
         fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
@@ -92,6 +103,21 @@ public class Screen extends JFrame {
             } catch (FileNotFoundException e1) {
                 logger.error("Failed to play video:"+file.getAbsolutePath(), e);
             }
+        }
+    }
+
+    class PlayAIListener implements ActionListener {
+
+        private String name;
+
+        public PlayAIListener(String name){
+            this.name = name;
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            logger.info("Play AI:"+name);
+            core.getController().playAI(name);
         }
     }
 }

@@ -2,11 +2,12 @@ package com.machinelearning.game.pingpong.model;
 
 import com.machinelearning.game.machine.model.Context;
 import com.machinelearning.game.machine.model.Record;
+import com.machinelearning.game.machine.model.round.RoundContext;
 
 /**
  * Created by zuhai.jiang on 2016/9/30.
  */
-public class PingPongContext extends Context {
+public class PingPongContext extends RoundContext {
     private int ballx;
     private int bally;
     private double dirx;
@@ -100,6 +101,7 @@ public class PingPongContext extends Context {
         rec.setRacketX(racketX);
         rec.setSpeed(speed);
         rec.setMove(move);
+        rec.setRoundCount(roundCount);
         return rec;
     }
 

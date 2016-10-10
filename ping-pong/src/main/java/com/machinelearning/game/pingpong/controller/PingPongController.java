@@ -1,8 +1,6 @@
 package com.machinelearning.game.pingpong.controller;
 
-import com.machinelearning.game.machine.controller.VideoPlayer;
 import com.machinelearning.game.machine.controller.round.RoundGameController;
-import com.machinelearning.game.machine.action.PlayingAction;
 import com.machinelearning.game.machine.model.Context;
 import com.machinelearning.game.pingpong.model.PingPongContext;
 import com.machinelearning.game.pingpong.model.PingPongRecord;
@@ -29,21 +27,14 @@ public class PingPongController extends RoundGameController {
 
     public PingPongController(PingPongCore core){
         super(core);
-        actionMap.put(KeyEvent.VK_LEFT, new PlayingAction() {
-            @Override
-            public void doAction() {
-                moveLeft();
-            }
-        });
-        actionMap.put(KeyEvent.VK_RIGHT, new PlayingAction() {
-            @Override
-            public void doAction() {
-                moveRight();
-            }
-        });
     }
 
-    private void moveLeft(){
+    public void stay(){
+        logger.info("stay");
+    }
+
+    public void moveLeft(){
+        logger.info("left");
         PingPongContext ctx = (PingPongContext) context;
         int rx=ctx.getRacketX();
         if (rx<RACKET_SPEED) {
@@ -54,7 +45,8 @@ public class PingPongController extends RoundGameController {
         ctx.setMove(KeyEvent.VK_LEFT);
     }
 
-    private void moveRight(){
+    public void moveRight(){
+        logger.info("right");
         PingPongContext ctx = (PingPongContext) context;
         int rx=ctx.getRacketX();
         if (rx>PingPongDrawer.WIDTH-PingPongDrawer.RACKET_LENGTH-RACKET_SPEED) {
@@ -94,29 +86,6 @@ public class PingPongController extends RoundGameController {
     @Override
     public void fail(){
         end();
-    }
-
-    @Override
-    protected void moveByVideo(String moveLine) {
-        String[] arr=moveLine.split("\t");
-        int move=Integer.parseInt(arr[6]);
-        if (move == KeyEvent.VK_LEFT) {
-            moveLeft();
-        } else if (move == KeyEvent.VK_RIGHT) {
-            moveRight();
-        }
-    }
-
-    @Override
-    protected void initByVideo(VideoPlayer player) {
-        String line = player.readLine();
-        PingPongRecord record = (PingPongRecord) getCore().getStorage().deserialize(line);
-        context.update(record);
-    }
-
-    @Override
-    protected void moveByAI() {
-
     }
 
     @Override

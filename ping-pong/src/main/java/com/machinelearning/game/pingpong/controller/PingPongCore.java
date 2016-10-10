@@ -1,10 +1,12 @@
 package com.machinelearning.game.pingpong.controller;
 
-import com.machinelearning.game.machine.controller.Drawer;
-import com.machinelearning.game.machine.controller.GameController;
-import com.machinelearning.game.machine.controller.GameCore;
-import com.machinelearning.game.machine.controller.Storage;
+import com.machinelearning.game.machine.controller.*;
 import com.machinelearning.game.machine.exception.GameException;
+import com.machinelearning.game.machine.player.AbstractPlayer;
+import com.machinelearning.game.machine.player.HumanPlayer;
+import com.machinelearning.game.pingpong.player.PingPongHumanPlayer;
+import com.machinelearning.game.pingpong.player.PingPongRandomPlayer;
+import com.machinelearning.game.pingpong.player.PingPongVideoPlayer;
 
 /**
  * Created by zuhai.jiang on 2016/9/30.
@@ -15,13 +17,9 @@ public class PingPongCore extends GameCore {
 
     public PingPongCore() throws GameException {
         super();
-        //init drawer
-        drawer=new PingPongDrawer(this);
     }
 
     private PingPongDrawer drawer;
-
-
 
     @Override
     public String getTitle() {
@@ -48,4 +46,20 @@ public class PingPongCore extends GameCore {
             throw new GameException("Failed to init storage", e);
         }
     }
+
+    @Override
+    protected HumanPlayer initHumanPlayer() {
+        return new PingPongHumanPlayer(controller);
+    }
+
+    @Override
+    protected AbstractPlayer initVideoPlayer() {
+        return new PingPongVideoPlayer(controller);
+    }
+
+    @Override
+    protected void initAIPlayers() {
+        aiPlayerMap.put("随机AI", new PingPongRandomPlayer(controller));
+    }
+
 }
